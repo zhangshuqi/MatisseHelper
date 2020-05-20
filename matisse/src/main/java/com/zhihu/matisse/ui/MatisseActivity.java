@@ -167,6 +167,23 @@ public class MatisseActivity extends AppCompatActivity implements
         mAlbumCollection.onCreate(this, this);
         mAlbumCollection.onRestoreInstanceState(savedInstanceState);
         mAlbumCollection.loadAlbums();
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int position = tab.getPosition();
+                ((MediaSelectionFragment)fragmentList.get(position)).refreshMediaGrid();
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
     @Override
@@ -230,10 +247,13 @@ public class MatisseActivity extends AppCompatActivity implements
             } else {
                 // refresh  fragment 选择的资源
                 mSelectedCollection.overwrite(selected, collectionType);
-                Fragment mediaSelectionFragment = getSupportFragmentManager().findFragmentByTag(
+               /* Fragment mediaSelectionFragment = getSupportFragmentManager().findFragmentByTag(
                         MediaSelectionFragment.class.getSimpleName());
                 if (mediaSelectionFragment instanceof MediaSelectionFragment) {
                     ((MediaSelectionFragment) mediaSelectionFragment).refreshMediaGrid();
+                }*/
+                for (Fragment fragment : fragmentList) {
+                    ((MediaSelectionFragment) fragment).refreshMediaGrid();
                 }
                 updateBottomToolbar();
             }
@@ -411,7 +431,7 @@ public class MatisseActivity extends AppCompatActivity implements
         } else {
             mContainer.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
-           if (fragmentList != null && fragmentList.size() > 0) {
+            if (fragmentList != null && fragmentList.size() > 0) {
                 clearFragmentCache();
                 tabLayout.removeAllTabs();
             }
@@ -431,6 +451,7 @@ public class MatisseActivity extends AppCompatActivity implements
             fragmentList.add(fragmentVideo);
             fragmentAdapter = new BaseFragmentAdapter(getSupportFragmentManager(), titleList, fragmentList);
             viewPager.setAdapter(fragmentAdapter);
+            viewPager.setOffscreenPageLimit(3);
             tabLayout.setupWithViewPager(viewPager);
            /* getSupportFragmentManager()
                     .beginTransaction()
@@ -466,6 +487,7 @@ public class MatisseActivity extends AppCompatActivity implements
             mSpec.onSelectedListener.onSelected(
                     mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString());
         }
+
     }
 
     @Override

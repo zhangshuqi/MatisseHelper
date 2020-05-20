@@ -148,6 +148,7 @@ public class MediaSelectionFragment extends Fragment implements
         if (mCheckStateListener != null) {
             mCheckStateListener.onUpdate();
         }
+
     }
 
     @Override

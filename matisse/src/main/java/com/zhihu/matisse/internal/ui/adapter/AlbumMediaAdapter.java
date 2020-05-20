@@ -173,7 +173,7 @@ public class AlbumMediaAdapter extends
         updateSelectedItem(item, holder);
     }
 
-    private void updateSelectedItem(Item item, RecyclerView.ViewHolder holder) {
+    public void updateSelectedItem(Item item, RecyclerView.ViewHolder holder) {
         if (mSelectionSpec.countable) {
             int checkedNum = mSelectedCollection.checkedNumOf(item);
             if (checkedNum == CheckView.UNCHECKED) {
