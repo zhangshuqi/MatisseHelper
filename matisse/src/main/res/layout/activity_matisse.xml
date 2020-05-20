@@ -19,6 +19,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -41,16 +42,49 @@
             android:textSize="20sp" />
     </androidx.appcompat.widget.Toolbar>
 
-    <FrameLayout
+    <!--?attr/bottomToolbar.bg-->
+    <RelativeLayout
         android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="170dp"
         android:layout_alignParentBottom="true"
-        android:background="?attr/bottomToolbar.bg"
+        android:background="#282828"
         android:elevation="4dp"
         tools:targetApi="lollipop">
 
         <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:id="@+id/tv_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="最多选择8个素材"
+            android:textColor="#FFFFFF"/>
+
+        <TextView
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentRight="true"
+            android:id="@+id/button_apply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:foreground="?selectableItemBackground"
+            android:padding="16dp"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginBottom="24dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:visibility="gone"
             android:id="@+id/button_preview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,7 +103,7 @@
             android:foreground="?selectableItemBackground"
             android:orientation="horizontal"
             android:padding="16dp"
-            android:visibility="visible"
+            android:visibility="gone"
             tools:showIn="@layout/activity_matisse">
 
 
@@ -94,16 +128,7 @@
         </LinearLayout>
 
 
-        <TextView
-            android:id="@+id/button_apply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:foreground="?selectableItemBackground"
-            android:padding="16dp"
-            android:textColor="?attr/bottomToolbar.apply.textColor"
-            android:textSize="16sp" />
-    </FrameLayout>
+    </RelativeLayout>
 
     <FrameLayout
         android:id="@+id/container1"

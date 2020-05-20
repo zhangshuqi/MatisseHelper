@@ -34,8 +34,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -68,6 +70,7 @@ import com.zhihu.matisse.internal.utils.SingleMediaScanner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Main Activity to display albums and media content (images/videos) in each album
@@ -104,6 +107,7 @@ public class MatisseActivity extends AppCompatActivity implements
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private BaseFragmentAdapter fragmentAdapter;
+    private RecyclerView mRecyclerview;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -139,7 +143,7 @@ public class MatisseActivity extends AppCompatActivity implements
         int color = ta.getColor(0, 0);
         ta.recycle();
         navigationIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
-
+        mRecyclerview = (RecyclerView) findViewById(R.id.recyclerview);
         mButtonPreview = (TextView) findViewById(R.id.button_preview);
         mButtonApply = (TextView) findViewById(R.id.button_apply);
         mButtonPreview.setOnClickListener(this);
@@ -283,9 +287,18 @@ public class MatisseActivity extends AppCompatActivity implements
         }
     }
 
+    ArrayList<Item> mItems;
     private void updateBottomToolbar() {
 
         int selectedCount = mSelectedCollection.count();
+        Bundle bundle = mSelectedCollection.getDataWithBundle();
+        mItems = bundle.getParcelableArrayList("state_selection");
+        int stateCollectionType = bundle.getInt("state_collection_type");
+        if (selectedCount == 0){
+            mItems.clear();
+        }else {
+
+        }
         if (selectedCount == 0) {
             mButtonPreview.setEnabled(false);
             mButtonApply.setEnabled(false);
@@ -302,10 +315,10 @@ public class MatisseActivity extends AppCompatActivity implements
 
 
         if (mSpec.originalable) {
-            mOriginalLayout.setVisibility(View.VISIBLE);
+            mOriginalLayout.setVisibility(View.GONE);
             updateOriginalState();
         } else {
-            mOriginalLayout.setVisibility(View.INVISIBLE);
+            mOriginalLayout.setVisibility(View.GONE);
         }
 
 
