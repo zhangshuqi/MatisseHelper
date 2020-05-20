@@ -131,8 +131,11 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             app:tabGravity="fill"
-            app:tabIndicatorColor="#FD882B"
+            app:tabIndicatorColor="#FF2641"
             app:tabIndicatorHeight="4dp"
+            app:tabTextColor="#FFFFFF"
+            app:tabIndicatorFullWidth="false"
+            app:tabSelectedTextColor="#FF2641"
             app:tabMode="fixed" />
 
         <androidx.viewpager.widget.ViewPager

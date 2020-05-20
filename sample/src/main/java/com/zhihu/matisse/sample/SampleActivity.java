@@ -108,7 +108,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                 break;
             case R.id.dracula:
                 Matisse.from(SampleActivity.this)
-                        .choose(MimeType.ofImage())
+                        .choose(MimeType.ofAll(), false)
                         .theme(R.style.Matisse_Dracula)
                         .countable(false)
                         .addFilter(new GifSizeFilter(320, 320, 5 * Filter.K * Filter.K))
