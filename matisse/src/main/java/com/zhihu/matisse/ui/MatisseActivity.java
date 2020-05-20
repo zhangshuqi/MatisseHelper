@@ -417,13 +417,13 @@ public class MatisseActivity extends AppCompatActivity implements
             }
 
             Fragment fragmentAll = MediaSelectionFragment.newInstance(album, 1);
-            Fragment fragmentImage = MediaSelectionFragment.newInstance(album, 2);
-            Fragment fragmentVideo = MediaSelectionFragment.newInstance(album, 3);
+            Fragment fragmentVideo = MediaSelectionFragment.newInstance(album, 2);
+            Fragment fragmentImage = MediaSelectionFragment.newInstance(album, 3);
             List<String> titleList = new ArrayList<>();
             titleList.clear();
             titleList.add("全部");
-            titleList.add("图片");
             titleList.add("视频");
+            titleList.add("图片");
             fragmentList = new ArrayList<>();
             fragmentList.clear();
             fragmentList.add(fragmentAll);
