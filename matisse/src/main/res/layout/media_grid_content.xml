@@ -21,7 +21,26 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <TextView
+        android:id="@+id/tv_num"
+        android:textSize="36sp"
+        android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="#6EFE216E"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <ImageView
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="6dp"
+        android:id="@+id/iv_thumbnail"
+        android:src="@drawable/ic_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|right"/>
+
     <com.zhihu.matisse.internal.ui.widget.CheckView
+        android:visibility="gone"
         android:id="@+id/check_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,12 +57,15 @@
         android:visibility="gone"/>
 
     <TextView
+        android:drawableLeft="@drawable/ic_photo_album_video"
+        android:drawablePadding="4dp"
         android:id="@+id/video_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|bottom"
+        android:layout_gravity="left|bottom"
+        android:gravity="center_vertical"
         android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         android:visibility="gone"/>

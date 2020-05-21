@@ -19,7 +19,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:elevation="4dp"
+        android:theme="?toolbar"
+        tools:targetApi="lollipop">
+
+        <TextView
+            android:id="@+id/selected_album"
+            android:layout_width="wrap_content"
+            android:layout_height="?actionBarSize"
+            android:foreground="?selectableItemBackground"
+            android:gravity="center"
+            android:text="20/60"
+            android:textColor="?attr/album.element.color"
+            android:textSize="20sp" />
+    </androidx.appcompat.widget.Toolbar>
+
     <com.zhihu.matisse.internal.ui.widget.PreviewViewPager
+        android:layout_below="@id/toolbar"
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

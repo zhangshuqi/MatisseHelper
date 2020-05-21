@@ -43,39 +43,50 @@
     </androidx.appcompat.widget.Toolbar>
 
     <!--?attr/bottomToolbar.bg-->
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="vertical"
         android:id="@+id/bottom_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="#282828"
         android:elevation="4dp"
         tools:targetApi="lollipop">
 
-        <TextView
+        <RelativeLayout
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:id="@+id/tv_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="最多选择8个素材"
-            android:textColor="#FFFFFF"/>
+            android:layout_width="match_parent"
+            android:layout_height="68dp">
 
-        <TextView
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentRight="true"
-            android:id="@+id/button_apply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:foreground="?selectableItemBackground"
-            android:padding="16dp"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
+            <TextView
+                android:layout_centerVertical="true"
+                android:id="@+id/tv_choose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="最多选择8个素材"
+                android:textColor="#FFFFFF"/>
+
+
+            <TextView
+                android:layout_centerVertical="true"
+                android:id="@+id/button_apply"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/selector_import"
+                android:foreground="?selectableItemBackground"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:layout_marginBottom="24dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_alignParentBottom="true"
@@ -128,7 +139,7 @@
         </LinearLayout>
 
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/container1"

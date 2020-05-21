@@ -34,6 +34,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
@@ -97,6 +99,7 @@ public class MatisseActivity extends AppCompatActivity implements
     private AlbumsAdapter mAlbumsAdapter;
     private TextView mButtonPreview;
     private TextView mButtonApply;
+    private TextView tvChoose;
     private View mContainer;
     private View mEmptyView;
 
@@ -146,6 +149,7 @@ public class MatisseActivity extends AppCompatActivity implements
         mRecyclerview = (RecyclerView) findViewById(R.id.recyclerview);
         mButtonPreview = (TextView) findViewById(R.id.button_preview);
         mButtonApply = (TextView) findViewById(R.id.button_apply);
+        tvChoose = (TextView) findViewById(R.id.tv_choose);
         mButtonPreview.setOnClickListener(this);
         mButtonApply.setOnClickListener(this);
         mContainer = findViewById(R.id.container);
@@ -160,6 +164,7 @@ public class MatisseActivity extends AppCompatActivity implements
         if (savedInstanceState != null) {
             mOriginalEnable = savedInstanceState.getBoolean(CHECK_STATE);
         }
+        mButtonPreview.setEnabled(false);
         updateBottomToolbar();
 
         mAlbumsAdapter = new AlbumsAdapter(this, null, false);
@@ -288,31 +293,37 @@ public class MatisseActivity extends AppCompatActivity implements
     }
 
     ArrayList<Item> mItems;
+    SelectedAdapter adapter;
     private void updateBottomToolbar() {
-
         int selectedCount = mSelectedCollection.count();
         Bundle bundle = mSelectedCollection.getDataWithBundle();
-        mItems = bundle.getParcelableArrayList("state_selection");
+        ArrayList<Item> items = bundle.getParcelableArrayList("state_selection");
         int stateCollectionType = bundle.getInt("state_collection_type");
-        if (selectedCount == 0){
-            mItems.clear();
+        if (adapter == null){
+            this.mItems = items;
+            mRecyclerview.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+            adapter = new SelectedAdapter(mItems);
+            mRecyclerview.setAdapter(adapter);
         }else {
-
+            mItems.clear();
+            mItems.addAll(items);
+            adapter.notifyDataSetChanged();
         }
         if (selectedCount == 0) {
             mButtonPreview.setEnabled(false);
             mButtonApply.setEnabled(false);
-            mButtonApply.setText(getString(R.string.button_apply_default));
+            mButtonApply.setText(getString(R.string.button_apply_default2));
         } else if (selectedCount == 1 && mSpec.singleSelectionModeEnabled()) {
             mButtonPreview.setEnabled(true);
-            mButtonApply.setText(R.string.button_apply_default);
+            mButtonApply.setText(R.string.button_apply_default2);
             mButtonApply.setEnabled(true);
         } else {
             mButtonPreview.setEnabled(true);
             mButtonApply.setEnabled(true);
-            mButtonApply.setText(getString(R.string.button_apply, selectedCount));
+            mButtonApply.setText(R.string.button_apply_default2);
+//            mButtonApply.setText(getString(R.string.button_apply2, selectedCount));
         }
-
+        tvChoose.setText("已选择" + selectedCount + "个素材");
 
         if (mSpec.originalable) {
             mOriginalLayout.setVisibility(View.GONE);

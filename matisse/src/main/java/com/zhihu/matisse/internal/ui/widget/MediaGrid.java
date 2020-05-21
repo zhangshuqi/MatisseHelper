@@ -20,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,7 +35,9 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
     private ImageView mThumbnail;
     private CheckView mCheckView;
     private ImageView mGifTag;
+    private ImageView ivThumbnail;
     private TextView mVideoDuration;
+    private TextView tvNum;
 
     private Item mMedia;
     private PreBindInfo mPreBindInfo;
@@ -57,18 +60,24 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
         mCheckView = (CheckView) findViewById(R.id.check_view);
         mGifTag = (ImageView) findViewById(R.id.gif);
         mVideoDuration = (TextView) findViewById(R.id.video_duration);
+        tvNum = (TextView) findViewById(R.id.tv_num);
+        ivThumbnail = (ImageView) findViewById(R.id.iv_thumbnail);
 
         mThumbnail.setOnClickListener(this);
         mCheckView.setOnClickListener(this);
+        ivThumbnail.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         if (mListener != null) {
             if (v == mThumbnail) {
-                mListener.onThumbnailClicked(mThumbnail, mMedia, mPreBindInfo.mViewHolder);
-            } else if (v == mCheckView) {
                 mListener.onCheckViewClicked(mCheckView, mMedia, mPreBindInfo.mViewHolder);
+            } else if (v == mCheckView) {
+                mListener.onThumbnailClicked(mThumbnail, mMedia, mPreBindInfo.mViewHolder);
+//                tvNum.setText();
+            }else if (v == ivThumbnail){
+                mListener.onThumbnailClicked(mThumbnail, mMedia, mPreBindInfo.mViewHolder);
             }
         }
     }
@@ -103,9 +112,33 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
 
     public void setCheckedNum(int checkedNum) {
         mCheckView.setCheckedNum(checkedNum);
+        if (!mPreBindInfo.mCheckViewCountable) {
+            throw new IllegalStateException("CheckView is not countable, call setChecked() instead.");
+        }
+        if (checkedNum != Integer.MIN_VALUE && checkedNum <= 0) {
+            throw new IllegalArgumentException("checked num can't be negative.");
+        }
+        if (mPreBindInfo.mCheckViewCountable){
+            if (checkedNum != Integer.MIN_VALUE) {
+                if (checkedNum < 10){
+                    tvNum.setText("0" + checkedNum);
+                }else{
+                    tvNum.setText(String.valueOf(checkedNum));
+                }
+                tvNum.setVisibility(VISIBLE);
+            }else{
+                tvNum.setVisibility(GONE);
+            }
+        }else {
+           if (checked){
+               tvNum.setVisibility(GONE);
+           }
+        }
     }
 
+    boolean checked;
     public void setChecked(boolean checked) {
+        this.checked = checked;
         mCheckView.setChecked(checked);
     }
 
