@@ -319,6 +319,7 @@ public class MatisseActivity extends AppCompatActivity implements
                     ((MediaSelectionFragment)fragmentList.get(tabPosition)).refreshMediaGrid();
                 }
                 if (mItems != null && mItems.size() > position){
+
                     mItems.remove(position);
                     adapter.notifyItemRemoved(position);
                     adapter.notifyItemRangeChanged(position,mItems.size() - position);

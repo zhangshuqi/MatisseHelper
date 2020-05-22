@@ -21,6 +21,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
@@ -30,10 +31,14 @@ import androidx.viewpager.widget.ViewPager;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -66,7 +71,9 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
 
     protected PreviewPagerAdapter mAdapter;
 
-    protected CheckView mCheckView;
+   protected CheckView mCheckView;
+   // protected CheckBox viewCheck;
+    protected ImageView imageCheck;
     protected TextView mButtonBack;
     protected TextView mButtonApply;
     protected TextView mSize;
@@ -78,7 +85,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     protected boolean mOriginalEnable;
 
     private FrameLayout mBottomToolbar;
-    private FrameLayout mTopToolbar;
+    private LinearLayout mTopToolbar;
     private boolean mIsToolbarHide = false;
     private TextView tvCheck;
     protected TextView mSelectedAlbum;
@@ -130,42 +137,28 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         mAdapter = new PreviewPagerAdapter(getSupportFragmentManager(), null);
         mPager.setAdapter(mAdapter);
         mCheckView = (CheckView) findViewById(R.id.check_view);
+     //   viewCheck = (CheckBox) findViewById(R.id.viewCheck);
+        imageCheck = (ImageView) findViewById(R.id.imageCheck);
         mCheckView.setCountable(mSpec.countable);
+        Log.d("mSpec.countable",mSpec.countable+"");
+        //viewCheck.setChecked(mSpec.countable);
         mBottomToolbar = findViewById(R.id.bottom_toolbar);
         mTopToolbar = findViewById(R.id.top_toolbar);
         tvCheck = (TextView)findViewById(R.id.tv_check);
         mSelectedAlbum = (TextView)findViewById(R.id.selected_album);
-
-        tvCheck.setOnClickListener(new View.OnClickListener() {
+/*
+        viewCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checkItemStatus();
+            }
+        });
+*/
+        mTopToolbar.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Item item = mAdapter.getMediaItem(mPager.getCurrentItem());
-                if (mSelectedCollection.isSelected(item)) {
-                    mSelectedCollection.remove(item);
-                    if (mSpec.countable) {
-                        mCheckView.setCheckedNum(CheckView.UNCHECKED);
-                        tvCheck.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_unselect),null,null,null);
-                    } else {
-                        mCheckView.setChecked(false);
-                    }
-                } else {
-                    if (assertAddSelection(item)) {
-                        mSelectedCollection.add(item);
-                        if (mSpec.countable) {
-                            mCheckView.setCheckedNum(mSelectedCollection.checkedNumOf(item));
-                            tvCheck.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_select),null,null,null);
-                        } else {
-                            mCheckView.setChecked(true);
-                        }
-                    }
-                }
-                updateApplyButton();
-
-                if (mSpec.onSelectedListener != null) {
-                    mSpec.onSelectedListener.onSelected(
-                            mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString());
-                }
+                checkItemStatus();
             }
         });
         mCheckView.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +222,37 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         });
 
         updateApplyButton();
+    }
+
+    private void checkItemStatus() {
+        Item item = mAdapter.getMediaItem(mPager.getCurrentItem());
+        if (mSelectedCollection.isSelected(item)) {
+            mSelectedCollection.remove(item);
+            if (mSpec.countable) {
+                imageCheck.setSelected(false);
+                //mCheckView.setCheckedNum(CheckView.UNCHECKED);
+               // tvCheck.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_unselect),null,null,null);
+            } else {
+                imageCheck.setSelected(false);
+            }
+        } else {
+            if (assertAddSelection(item)) {
+                mSelectedCollection.add(item);
+                if (mSpec.countable) {
+                  //  mCheckView.setCheckedNum(mSelectedCollection.checkedNumOf(item));
+                   // tvCheck.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_select),null,null,null);
+                    imageCheck.setSelected(true);
+                } else {
+                    imageCheck.setSelected(true);
+                }
+            }
+        }
+        updateApplyButton();
+
+        if (mSpec.onSelectedListener != null) {
+            mSpec.onSelectedListener.onSelected(
+                    mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString());
+        }
     }
 
     @Override
@@ -298,19 +322,26 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             Item item = adapter.getMediaItem(position);
             if (mSpec.countable) {
                 int checkedNum = mSelectedCollection.checkedNumOf(item);
-                mCheckView.setCheckedNum(checkedNum);
+             mCheckView.setCheckedNum(checkedNum);
                 if (checkedNum > 0) {
-                    mCheckView.setEnabled(true);
+                    //mCheckView.setEnabled(true);
+                    imageCheck.setEnabled(true);
                 } else {
+                   // viewCheck.setEnabled(true);
+
+                    imageCheck.setEnabled(!mSelectedCollection.maxSelectableReached());
                     mCheckView.setEnabled(!mSelectedCollection.maxSelectableReached());
                 }
             } else {
                 boolean checked = mSelectedCollection.isSelected(item);
                 mCheckView.setChecked(checked);
+                imageCheck.setEnabled(checked);
                 if (checked) {
+                    imageCheck.setEnabled(true);
                     mCheckView.setEnabled(true);
                 } else {
                     mCheckView.setEnabled(!mSelectedCollection.maxSelectableReached());
+                    imageCheck.setEnabled(!mSelectedCollection.maxSelectableReached());
                 }
             }
             updateSize(item);
