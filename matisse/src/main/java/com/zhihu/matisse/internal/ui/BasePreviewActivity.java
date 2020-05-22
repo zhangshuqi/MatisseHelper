@@ -323,9 +323,12 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             if (mSpec.countable) {
                 int checkedNum = mSelectedCollection.checkedNumOf(item);
              mCheckView.setCheckedNum(checkedNum);
+                boolean checked = mSelectedCollection.isSelected(item);
+                imageCheck.setSelected(checked);
                 if (checkedNum > 0) {
                     //mCheckView.setEnabled(true);
                     imageCheck.setEnabled(true);
+                   // imageCheck.setSelected(true);
                 } else {
                    // viewCheck.setEnabled(true);
 
@@ -335,7 +338,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             } else {
                 boolean checked = mSelectedCollection.isSelected(item);
                 mCheckView.setChecked(checked);
-                imageCheck.setEnabled(checked);
+                imageCheck.setSelected(checked);
                 if (checked) {
                     imageCheck.setEnabled(true);
                     mCheckView.setEnabled(true);
