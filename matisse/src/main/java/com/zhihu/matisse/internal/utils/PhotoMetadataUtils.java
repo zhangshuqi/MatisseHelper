@@ -35,6 +35,7 @@ import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
 import com.zhihu.matisse.internal.entity.IncapableCause;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,16 +80,18 @@ public final class PhotoMetadataUtils {
     }
 
     public static Point getBitmapBound(ContentResolver resolver, Uri uri) {
-        InputStream is = null;
+        FileInputStream is = null;
         try {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            is = resolver.openInputStream(uri);
-            BitmapFactory.decodeStream(is, null, options);
+       /*     is = resolver.openInputStream(uri);
+            BitmapFactory.decodeStream(is, null, options);*/
+            is = new FileInputStream(uri.getPath());
+            BitmapFactory.decodeFileDescriptor(is.getFD(), null, options);
             int width = options.outWidth;
             int height = options.outHeight;
             return new Point(width, height);
-        } catch (FileNotFoundException e) {
+        } catch ( Exception e) {
             return new Point(0, 0);
         } finally {
             if (is != null) {
@@ -155,16 +158,17 @@ public final class PhotoMetadataUtils {
     }
 
     private static boolean shouldRotate(ContentResolver resolver, Uri uri) {
-        ExifInterface exif;
+       return false;
+       /* ExifInterface exif;
         try {
             exif = ExifInterfaceCompat.newInstance(getPath(resolver, uri));
-        } catch (IOException e) {
+        } catch (Exception e) {
             Log.e(TAG, "could not read exif info of the image: " + uri);
             return false;
         }
         int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
         return orientation == ExifInterface.ORIENTATION_ROTATE_90
-                || orientation == ExifInterface.ORIENTATION_ROTATE_270;
+                || orientation == ExifInterface.ORIENTATION_ROTATE_270;*/
     }
 
     public static float getSizeInMB(long sizeInBytes) {
