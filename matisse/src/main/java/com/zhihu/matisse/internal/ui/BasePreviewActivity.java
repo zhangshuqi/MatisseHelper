@@ -21,6 +21,7 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
@@ -28,6 +29,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -38,6 +41,7 @@ import com.zhihu.matisse.R;
 import com.zhihu.matisse.internal.entity.IncapableCause;
 import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
+import com.zhihu.matisse.internal.model.AlbumCollection;
 import com.zhihu.matisse.internal.model.SelectedItemCollection;
 import com.zhihu.matisse.internal.ui.adapter.PreviewPagerAdapter;
 import com.zhihu.matisse.internal.ui.widget.CheckRadioView;
@@ -76,6 +80,9 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     private FrameLayout mBottomToolbar;
     private FrameLayout mTopToolbar;
     private boolean mIsToolbarHide = false;
+    private TextView tvCheck;
+    protected TextView mSelectedAlbum;
+    private final AlbumCollection mAlbumCollection = new AlbumCollection();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -90,16 +97,6 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         if (Platform.hasKitKat()) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        Drawable navigationIcon = toolbar.getNavigationIcon();
-        TypedArray ta = getTheme().obtainStyledAttributes(new int[]{R.attr.album_element_color});
-        int color = ta.getColor(0, 0);
-        ta.recycle();
-        navigationIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
         mSpec = SelectionSpec.getInstance();
         if (mSpec.needOrientationRestriction()) {
             setRequestedOrientation(mSpec.orientation);
@@ -112,6 +109,16 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             mSelectedCollection.onCreate(savedInstanceState);
             mOriginalEnable = savedInstanceState.getBoolean(CHECK_STATE);
         }
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        Drawable navigationIcon = toolbar.getNavigationIcon();
+        TypedArray ta = getTheme().obtainStyledAttributes(new int[]{R.attr.album_element_color});
+        int color = ta.getColor(0, 0);
+        ta.recycle();
+        navigationIcon.setColorFilter(color, PorterDuff.Mode.SRC_IN);
         mButtonBack = (TextView) findViewById(R.id.button_back);
         mButtonApply = (TextView) findViewById(R.id.button_apply);
         mSize = (TextView) findViewById(R.id.size);
@@ -126,7 +133,41 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         mCheckView.setCountable(mSpec.countable);
         mBottomToolbar = findViewById(R.id.bottom_toolbar);
         mTopToolbar = findViewById(R.id.top_toolbar);
+        tvCheck = (TextView)findViewById(R.id.tv_check);
+        mSelectedAlbum = (TextView)findViewById(R.id.selected_album);
 
+        tvCheck.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Item item = mAdapter.getMediaItem(mPager.getCurrentItem());
+                if (mSelectedCollection.isSelected(item)) {
+                    mSelectedCollection.remove(item);
+                    if (mSpec.countable) {
+                        mCheckView.setCheckedNum(CheckView.UNCHECKED);
+                        tvCheck.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_unselect),null,null,null);
+                    } else {
+                        mCheckView.setChecked(false);
+                    }
+                } else {
+                    if (assertAddSelection(item)) {
+                        mSelectedCollection.add(item);
+                        if (mSpec.countable) {
+                            mCheckView.setCheckedNum(mSelectedCollection.checkedNumOf(item));
+                            tvCheck.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.ic_select),null,null,null);
+                        } else {
+                            mCheckView.setChecked(true);
+                        }
+                    }
+                }
+                updateApplyButton();
+
+                if (mSpec.onSelectedListener != null) {
+                    mSpec.onSelectedListener.onSelected(
+                            mSelectedCollection.asListOfUri(), mSelectedCollection.asListOfString());
+                }
+            }
+        });
         mCheckView.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -222,7 +263,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         if (mIsToolbarHide) {
             mTopToolbar.animate()
                     .setInterpolator(new FastOutSlowInInterpolator())
-                    .translationYBy(mTopToolbar.getMeasuredHeight())
+                    .translationYBy(-(mTopToolbar.getMeasuredHeight()*2))
                     .start();
             mBottomToolbar.animate()
                     .translationYBy(-mBottomToolbar.getMeasuredHeight())
@@ -231,7 +272,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         } else {
             mTopToolbar.animate()
                     .setInterpolator(new FastOutSlowInInterpolator())
-                    .translationYBy(-mTopToolbar.getMeasuredHeight())
+                    .translationYBy(mTopToolbar.getMeasuredHeight()*2)
                     .start();
             mBottomToolbar.animate()
                     .setInterpolator(new FastOutSlowInInterpolator())
@@ -369,4 +410,14 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         IncapableCause.handleCause(this, cause);
         return cause == null;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

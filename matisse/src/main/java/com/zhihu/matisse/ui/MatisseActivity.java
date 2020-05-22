@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -111,6 +112,7 @@ public class MatisseActivity extends AppCompatActivity implements
     private TabLayout tabLayout;
     private BaseFragmentAdapter fragmentAdapter;
     private RecyclerView mRecyclerview;
+    private int tabPosition;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -171,7 +173,7 @@ public class MatisseActivity extends AppCompatActivity implements
         mAlbumsSpinner = new AlbumsSpinner(this);
         mAlbumsSpinner.setOnItemSelectedListener(this);
         mAlbumsSpinner.setSelectedTextView((TextView) findViewById(R.id.selected_album));
-        mAlbumsSpinner.setPopupAnchorView(findViewById(R.id.toolbar));
+        mAlbumsSpinner.setPopupAnchorView(findViewById(R.id.selected_album));
         mAlbumsSpinner.setAdapter(mAlbumsAdapter);
         mAlbumCollection.onCreate(this, this);
         mAlbumCollection.onRestoreInstanceState(savedInstanceState);
@@ -179,8 +181,8 @@ public class MatisseActivity extends AppCompatActivity implements
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                int position = tab.getPosition();
-                ((MediaSelectionFragment)fragmentList.get(position)).refreshMediaGrid();
+                tabPosition = tab.getPosition();
+                ((MediaSelectionFragment)fragmentList.get(tabPosition)).refreshMediaGrid();
             }
 
             @Override
@@ -297,18 +299,33 @@ public class MatisseActivity extends AppCompatActivity implements
     private void updateBottomToolbar() {
         int selectedCount = mSelectedCollection.count();
         Bundle bundle = mSelectedCollection.getDataWithBundle();
-        ArrayList<Item> items = bundle.getParcelableArrayList("state_selection");
+        ArrayList<Item> itemList = bundle.getParcelableArrayList("state_selection");
         int stateCollectionType = bundle.getInt("state_collection_type");
         if (adapter == null){
-            this.mItems = items;
+            this.mItems = itemList;
             mRecyclerview.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
             adapter = new SelectedAdapter(mItems);
             mRecyclerview.setAdapter(adapter);
         }else {
             mItems.clear();
-            mItems.addAll(items);
+            mItems.addAll(itemList);
             adapter.notifyDataSetChanged();
         }
+        adapter.setOnDeleteListener(new SelectedAdapter.OnDeleteListener() {
+            @Override
+            public void delete(Item items,int position) {
+                if (mSelectedCollection != null && mSelectedCollection.count() > 0){
+                    mSelectedCollection.remove(items);
+                    ((MediaSelectionFragment)fragmentList.get(tabPosition)).refreshMediaGrid();
+                }
+                if (mItems != null && mItems.size() > position){
+                    mItems.remove(position);
+                    adapter.notifyItemRemoved(position);
+                    adapter.notifyItemRangeChanged(position,mItems.size() - position);
+//                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
         if (selectedCount == 0) {
             mButtonPreview.setEnabled(false);
             mButtonApply.setEnabled(false);

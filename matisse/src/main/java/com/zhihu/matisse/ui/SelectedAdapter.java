@@ -1,6 +1,7 @@
 package com.zhihu.matisse.ui;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,11 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.GlideBuilder;
 import com.zhihu.matisse.R;
-import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.internal.entity.Item;
-import com.zhihu.matisse.internal.utils.UIUtils;
 
 import java.util.ArrayList;
 
@@ -74,7 +72,12 @@ public class SelectedAdapter extends RecyclerView.Adapter<SelectedAdapter.MyView
         }else{
             holder.videoDuration.setVisibility(View.GONE);
         }*/
-        
+        holder.ivDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.delete(mItems.get(position),position);
+            }
+        });
     }
 
     @Override
@@ -101,5 +104,14 @@ public class SelectedAdapter extends RecyclerView.Adapter<SelectedAdapter.MyView
             ivDelete = itemView.findViewById(R.id.iv_delete);
             videoDuration = itemView.findViewById(R.id.video_duration);
         }
+    }
+
+    OnDeleteListener listener;
+    public interface OnDeleteListener{
+        void delete(Item mItems,int position);
+    }
+
+    public void setOnDeleteListener(OnDeleteListener listener){
+        this.listener = listener;
     }
 }

@@ -16,6 +16,7 @@
 package com.zhihu.matisse.internal.ui.widget;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -62,7 +63,7 @@ public class MediaGrid extends SquareFrameLayout implements View.OnClickListener
         mVideoDuration = (TextView) findViewById(R.id.video_duration);
         tvNum = (TextView) findViewById(R.id.tv_num);
         ivThumbnail = (ImageView) findViewById(R.id.iv_thumbnail);
-
+//        tvNum.setTypeface(Typeface.createFromAsset(context.getAssets(),"chinese_font.ttf"));
         mThumbnail.setOnClickListener(this);
         mCheckView.setOnClickListener(this);
         ivThumbnail.setOnClickListener(this);

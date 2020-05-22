@@ -37,6 +37,7 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
     private AlbumMediaCollection mCollection = new AlbumMediaCollection();
 
     private boolean mIsAlreadySetPosition;
+    private Album album;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,9 +48,9 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
             return;
         }
         mCollection.onCreate(this, this);
-        Album album = getIntent().getParcelableExtra(EXTRA_ALBUM);
+        album = getIntent().getParcelableExtra(EXTRA_ALBUM);
         mCollection.load(album);
-
+        mSelectedAlbum.setText(mPreviousPos + "/" + album.getCount());
         Item item = getIntent().getParcelableExtra(EXTRA_ITEM);
         if (mSpec.countable) {
             mCheckView.setCheckedNum(mSelectedCollection.checkedNumOf(item));
@@ -87,6 +88,7 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
             int selectedIndex = items.indexOf(selected);
             mPager.setCurrentItem(selectedIndex, false);
             mPreviousPos = selectedIndex;
+
         }
     }
 

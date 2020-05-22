@@ -44,8 +44,8 @@ public class AlbumsSpinner {
         mListPopupWindow.setModal(true);
         float density = context.getResources().getDisplayMetrics().density;
         mListPopupWindow.setContentWidth((int) (216 * density));
-        mListPopupWindow.setHorizontalOffset((int) (16 * density));
-        mListPopupWindow.setVerticalOffset((int) (-48 * density));
+        mListPopupWindow.setHorizontalOffset((int) (-76 * density));
+        mListPopupWindow.setVerticalOffset((int) (1 * density));
 
         mListPopupWindow.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
