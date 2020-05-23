@@ -51,6 +51,7 @@ import android.widget.TextView;
 import com.google.android.material.tabs.TabLayout;
 import com.zhihu.matisse.BaseFragmentAdapter;
 import com.zhihu.matisse.R;
+import com.zhihu.matisse.SharedPreferencesUtils;
 import com.zhihu.matisse.internal.entity.Album;
 import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
@@ -87,6 +88,7 @@ public class MatisseActivity extends AppCompatActivity implements
 
     public static final String EXTRA_RESULT_SELECTION = "extra_result_selection";
     public static final String EXTRA_RESULT_SELECTION_PATH = "extra_result_selection_path";
+    public static final String EXTRA_RESULT_SELECTION_ITEM = "extra_result_selection_item";
     public static final String EXTRA_RESULT_ORIGINAL_ENABLE = "extra_result_original_enable";
     private static final int REQUEST_CODE_PREVIEW = 23;
     private static final int REQUEST_CODE_CAPTURE = 24;
@@ -252,6 +254,7 @@ public class MatisseActivity extends AppCompatActivity implements
                 }
                 result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
                 result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
+                result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION_ITEM, selected);
                 result.putExtra(EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable);
                 setResult(RESULT_OK, result);
                 finish();
@@ -299,8 +302,8 @@ public class MatisseActivity extends AppCompatActivity implements
     private void updateBottomToolbar() {
         int selectedCount = mSelectedCollection.count();
         Bundle bundle = mSelectedCollection.getDataWithBundle();
-        ArrayList<Item> itemList = bundle.getParcelableArrayList("state_selection");
-        int stateCollectionType = bundle.getInt("state_collection_type");
+        ArrayList<Item> itemList = bundle.getParcelableArrayList(SelectedItemCollection.STATE_SELECTION);
+        int stateCollectionType = bundle.getInt(SelectedItemCollection.STATE_COLLECTION_TYPE);
         if (adapter == null){
             this.mItems = itemList;
             mRecyclerview.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
@@ -400,6 +403,8 @@ public class MatisseActivity extends AppCompatActivity implements
             result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION, selectedUris);
             ArrayList<String> selectedPaths = (ArrayList<String>) mSelectedCollection.asListOfString();
             result.putStringArrayListExtra(EXTRA_RESULT_SELECTION_PATH, selectedPaths);
+            Bundle dataWithBundle = mSelectedCollection.getDataWithBundle();
+            result.putParcelableArrayListExtra(EXTRA_RESULT_SELECTION_ITEM, dataWithBundle.getParcelableArrayList(SelectedItemCollection.STATE_SELECTION));
             result.putExtra(EXTRA_RESULT_ORIGINAL_ENABLE, mOriginalEnable);
             setResult(RESULT_OK, result);
             finish();
@@ -534,6 +539,7 @@ public class MatisseActivity extends AppCompatActivity implements
 
     @Override
     public void onMediaClick(Album album, Item item, int adapterPosition) {
+        SharedPreferencesUtils.putLong(this,"album_count",album.getCount());
         Intent intent = new Intent(this, AlbumPreviewActivity.class);
         intent.putExtra(AlbumPreviewActivity.EXTRA_ALBUM, album);
         intent.putExtra(AlbumPreviewActivity.EXTRA_ITEM, item);

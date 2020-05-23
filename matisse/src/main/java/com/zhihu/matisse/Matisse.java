@@ -16,11 +16,13 @@
 package com.zhihu.matisse;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.ui.MatisseActivity;
 
 import java.lang.ref.WeakReference;
@@ -83,6 +85,10 @@ public final class Matisse {
      */
     public static List<Uri> obtainResult(Intent data) {
         return data.getParcelableArrayListExtra(MatisseActivity.EXTRA_RESULT_SELECTION);
+    }
+
+    public static List<Item> obtainItemResult(Intent data) {
+        return data.getParcelableArrayListExtra(MatisseActivity.EXTRA_RESULT_SELECTION_ITEM);
     }
 
     /**

@@ -17,6 +17,7 @@ package com.zhihu.matisse.internal.ui;
 
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -38,7 +39,6 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
     private AlbumMediaCollection mCollection = new AlbumMediaCollection();
 
     private boolean mIsAlreadySetPosition;
-    private Album album;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,9 +49,8 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
             return;
         }
         mCollection.onCreate(this, this);
-        album = getIntent().getParcelableExtra(EXTRA_ALBUM);
+        Album album = getIntent().getParcelableExtra(EXTRA_ALBUM);
         mCollection.load(album);
-        mSelectedAlbum.setText(mPreviousPos + "/" + album.getCount());
         Item item = getIntent().getParcelableExtra(EXTRA_ITEM);
         if (mSpec.countable) {
             mCheckView.setCheckedNum(mSelectedCollection.checkedNumOf(item));
@@ -81,7 +80,6 @@ public class AlbumPreviewActivity extends BasePreviewActivity implements
         if (items.isEmpty()) {
             return;
         }
-
         PreviewPagerAdapter adapter = (PreviewPagerAdapter) mPager.getAdapter();
         adapter.addAll(items);
         adapter.notifyDataSetChanged();

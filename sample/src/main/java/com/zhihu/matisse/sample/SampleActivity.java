@@ -39,6 +39,7 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 import com.zhihu.matisse.engine.impl.PicassoEngine;
 import com.zhihu.matisse.filter.Filter;
 import com.zhihu.matisse.internal.entity.CaptureStrategy;
+import com.zhihu.matisse.internal.entity.Item;
 
 import java.util.List;
 
@@ -145,6 +146,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_CHOOSE && resultCode == RESULT_OK) {
+            List<Item> items = Matisse.obtainItemResult(data);
             mAdapter.setData(Matisse.obtainResult(data), Matisse.obtainPathResult(data));
             Log.e("OnActivityResult ", String.valueOf(Matisse.obtainOriginalState(data)));
         }

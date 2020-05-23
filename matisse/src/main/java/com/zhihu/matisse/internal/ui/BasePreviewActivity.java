@@ -43,6 +43,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.zhihu.matisse.R;
+import com.zhihu.matisse.SharedPreferencesUtils;
 import com.zhihu.matisse.internal.entity.IncapableCause;
 import com.zhihu.matisse.internal.entity.Item;
 import com.zhihu.matisse.internal.entity.SelectionSpec;
@@ -90,6 +91,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
     private TextView tvCheck;
     protected TextView mSelectedAlbum;
     private final AlbumCollection mAlbumCollection = new AlbumCollection();
+    private long albumCount;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -146,6 +148,8 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
         mTopToolbar = findViewById(R.id.top_toolbar);
         tvCheck = (TextView)findViewById(R.id.tv_check);
         mSelectedAlbum = (TextView)findViewById(R.id.selected_album);
+        albumCount = SharedPreferencesUtils.getLong(this,"album_count");
+        mSelectedAlbum.setText(1 + "/" + albumCount);
 /*
         viewCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -350,6 +354,7 @@ public abstract class BasePreviewActivity extends AppCompatActivity implements V
             updateSize(item);
         }
         mPreviousPos = position;
+        mSelectedAlbum.setText((position + 1) + "/" + albumCount);
     }
 
     @Override
